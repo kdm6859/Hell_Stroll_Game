@@ -34,13 +34,13 @@ public class PlayerGroundedState : PlayerState
         //    stateMachine.ChangeState(player.primaryAttackState);
         //}
 
-        //if (!player.IsGroundDetected())
-        //    stateMachine.ChangeState(player.airState);
+        if (!player.IsGroundDetected())
+            stateMachine.ChangeState(player.airState);
 
-        //if (Input.GetKeyDown(KeyCode.LeftAlt) && player.IsGroundDetected())
-        //{
-        //    stateMachine.ChangeState(player.jumpState);
-        //}
+        if (Input.GetKeyDown(KeyCode.Space) && player.IsGroundDetected())
+        {
+            stateMachine.ChangeState(player.jumpState);
+        }
     }
 
     public override void FixedUpdate()

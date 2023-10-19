@@ -1,7 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[Flags]
+enum asd
+{
+    None = 0,
+    a = 1 << 0,
+    b = 1 << 1,
+    c = 1 << 2,
+    d = 1 << 3,
+    Everything = ~None,
+
+    x = a | b
+}
 public class PlayerMoveState : PlayerGroundedState
 {
     Vector3 dirVec;
@@ -12,15 +26,16 @@ public class PlayerMoveState : PlayerGroundedState
 
     }
 
+ 
     public override void Enter()
     {
         base.Enter();
+        
     }
 
     public override void Update()
     {
         base.Update();
-
         //moveVec = player.transform.forward * zInput * player.moveSpeed;
 
         //캐릭터 방향 설정

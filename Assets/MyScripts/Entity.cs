@@ -17,12 +17,12 @@ public class Entity : MonoBehaviour
 
 
     [Header("Collision Info")]
-    public Transform attackCheck;
-    public float attackCheckRadius;
-    [SerializeField] protected Transform groundCheck;
+    //public Transform attackCheck;
+    //public float attackCheckRadius;
+    //[SerializeField] protected Transform wallCheck;
+    //[SerializeField] protected float wallCheckDistance;
+    [SerializeField] protected Transform[] groundCheck;
     [SerializeField] protected float groundCheckDistance;
-    [SerializeField] protected Transform wallCheck;
-    [SerializeField] protected float wallCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
 
 
@@ -45,12 +45,12 @@ public class Entity : MonoBehaviour
 
     protected virtual void Update()
     {
-        
+
     }
 
     protected virtual void FixedUpdate()
     {
-        
+
     }
 
     public virtual void Damage()
@@ -100,23 +100,34 @@ public class Entity : MonoBehaviour
 
     #region Collision
     public virtual bool IsGroundDetected()
-    { return false; }
-        //=> Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
+    {
+        for (int i = 0; i < groundCheck.Length; i++)
+        {
+            if (Physics.Raycast(groundCheck[i].position, Vector3.down, groundCheckDistance, whatIsGround))
+                return true;
+        }
+
+        return false;
+    }
+
 
     //public virtual bool IsWallDetected()
     //    => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
 
-    //protected virtual void OnDrawGizmos()
-    //{
-    //    Gizmos.DrawLine(groundCheck.position, new Vector3(
-    //        groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+    protected virtual void OnDrawGizmos()
+    {
+        for (int i = 0; i < groundCheck.Length; i++)
+        {
+            Gizmos.DrawLine(groundCheck[i].position, new Vector3(
+                groundCheck[i].position.x, groundCheck[i].position.y - groundCheckDistance, groundCheck[i].position.z));
+        }
 
-    //    Gizmos.color = Color.red;
+        //Gizmos.color = Color.red;
 
-    //    //Gizmos.DrawLine(wallCheck.position, new Vector3(
-    //    //    wallCheck.position.x + wallCheckDistance * facingDir, wallCheck.position.y));
+        //Gizmos.DrawLine(wallCheck.position, new Vector3(
+        //    wallCheck.position.x + wallCheckDistance * facingDir, wallCheck.position.y));
 
-    //    Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
-    //}
+        //Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
+    }
     #endregion
 }

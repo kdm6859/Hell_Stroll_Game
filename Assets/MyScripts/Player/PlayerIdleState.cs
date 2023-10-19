@@ -15,7 +15,7 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.Enter();
 
-        rb.velocity = new Vector3(0, rb.velocity.y, 0);
+        //rb.velocity = new Vector3(0, rb.velocity.y, 0);
     }
 
     public override void Update()

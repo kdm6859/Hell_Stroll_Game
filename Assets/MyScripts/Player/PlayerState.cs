@@ -45,7 +45,7 @@ public class PlayerState
 
         
 
-        //Debug.Log(animBoolName);
+        Debug.Log(animBoolName);
     }
 
     public virtual void FixedUpdate()
