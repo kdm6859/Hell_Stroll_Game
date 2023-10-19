@@ -1,0 +1,198 @@
+#pragma kernel Main
+
+
+struct SourceVertex
+{
+    float3 positionOS;
+    float3 normal;
+    float4 color;
+    float2 uv;
+    float2 uv3;
+    float2 uv4;
+};
+
+struct DrawVertex
+{
+    float3 position;
+    float3 normal;
+    float4 color;
+    float2 uv;
+    float2 uv3;
+    float2 uv4;
+};
+
+struct DrawTriangle
+{
+    DrawVertex vertices[3];
+};
+
+
+StructuredBuffer<SourceVertex> _SourceVertices;
+StructuredBuffer<int> _SourceTriangles;
+AppendStructuredBuffer<DrawTriangle> _DrawTriangles;
+
+int _NumSourceTriangles;
+float4x4 _LocalToWorld;
+float4 _CameraPosition;
+float3 _LODDistance;
+
+float2 GetCenter(float2 a, float2 b)
+{
+    return (a + b) / 2.0;
+}
+
+float3 GetCenter(float3 a, float3 b)
+{
+    return (a + b) / 2.0;
+}
+
+float4 GetCenter(float4 a, float4 b)
+{
+    return (a + b) / 2.0;
+}
+
+
+
+DrawVertex CreaterOutput(SourceVertex v)
+{
+    DrawVertex o;
+    o.position = v.positionOS; 
+    o.normal = v.normal;
+    o.color = v.color;
+    o.uv = v.uv;
+    o.uv3 = v.uv3;
+    o.uv4 = v.uv4;
+
+    return o;
+}
+
+void SetupAndOutputTriangle(DrawVertex a, DrawVertex b, DrawVertex c)
+{
+    DrawTriangle tri;
+    tri.vertices[0] = a;
+    tri.vertices[1] = b;
+    tri.vertices[2] = c;
+
+    _DrawTriangles.Append(tri);
+}
+
+DrawVertex GetNewVertex(DrawVertex vertexA, DrawVertex vertexB)
+{
+    DrawVertex center;
+
+    center.normal = GetCenter(vertexA.normal, vertexB.normal);
+    center.position = GetCenter(vertexA.position, vertexB.position);
+    center.uv = GetCenter(vertexA.uv, vertexB.uv);
+    center.uv3 = GetCenter(vertexA.uv3, vertexB.uv3);
+    center.uv4 = GetCenter(vertexA.uv4, vertexB.uv4);
+    center.color = GetCenter(vertexA.color, vertexB.color);
+
+    return center;
+}
+
+bool SplitTriangle(DrawVertex a, DrawVertex b, DrawVertex c, float lodDistance)
+{
+    bool i1In = distance(a.position, _CameraPosition.xyz) > lodDistance;
+    bool i2In = distance(b.position, _CameraPosition.xyz) > lodDistance;
+    bool i3In = distance(c.position, _CameraPosition.xyz) > lodDistance;
+
+
+    if (!i1In && !i2In && i3In)
+    {
+        DrawVertex centerAB = GetNewVertex(a, b);
+
+        SetupAndOutputTriangle(a, centerAB, c);
+        SetupAndOutputTriangle(centerAB, b, c);
+
+        return true;
+    }
+
+
+    if (i1In && !i2In && !i3In)
+    {
+        DrawVertex centerBC = GetNewVertex(b, c);
+
+        SetupAndOutputTriangle(a, centerBC, c);
+        SetupAndOutputTriangle(a, b, centerBC);
+
+        return true;
+    }
+
+
+    if (!i1In && i2In && !i3In)
+    {
+        DrawVertex centerAC = GetNewVertex(a, c);
+
+        SetupAndOutputTriangle(centerAC, b, c);
+        SetupAndOutputTriangle(a, b, centerAC);
+
+        return true;
+    }
+
+
+    if (i1In || i2In)
+    {
+        SetupAndOutputTriangle(a, b, c);
+        return true;
+        
+    }
+    return false;
+}
+
+
+void ThirdSplit(DrawVertex a, DrawVertex b, DrawVertex c)
+{
+    if (SplitTriangle(a, b, c, _LODDistance[2])) return;
+
+
+    DrawVertex centerAB = GetNewVertex(a, b);
+    DrawVertex centerBC = GetNewVertex(b, c);
+    DrawVertex centerCA = GetNewVertex(c, a);
+
+
+    SetupAndOutputTriangle(a, centerAB, centerCA);
+    SetupAndOutputTriangle(centerAB, b, centerBC);
+    SetupAndOutputTriangle(centerBC, c, centerCA);
+    SetupAndOutputTriangle(centerAB, centerBC, centerCA);
+}
+
+void SecondSplit(DrawVertex a, DrawVertex b, DrawVertex c)
+{
+    if (SplitTriangle(a, b, c, _LODDistance[1])) return;
+
+
+    DrawVertex centerAB = GetNewVertex(a, b);
+    DrawVertex centerBC = GetNewVertex(b, c);
+    DrawVertex centerCA = GetNewVertex(c, a);
+
+    ThirdSplit(a, centerAB, centerCA);
+    ThirdSplit(centerAB, b, centerBC);
+    ThirdSplit(centerBC, c, centerCA);
+    ThirdSplit(centerAB, centerBC, centerCA);
+}
+
+
+[numthreads(128, 1, 1)]
+void Main(uint3 id : SV_DispatchThreadID)
+{
+    if ((int)id.x >= _NumSourceTriangles)    
+        return;
+    
+    int triStart = id.x * 3;
+
+    DrawVertex a = CreaterOutput(_SourceVertices[_SourceTriangles[triStart]]);
+    DrawVertex b = CreaterOutput(_SourceVertices[_SourceTriangles[triStart + 1]]);
+    DrawVertex c = CreaterOutput(_SourceVertices[_SourceTriangles[triStart + 2]]);
+
+    if (SplitTriangle(a, b, c, _LODDistance[0])) return;
+
+
+    DrawVertex centerAB = GetNewVertex(a, b);
+    DrawVertex centerBC = GetNewVertex(b, c);
+    DrawVertex centerCA = GetNewVertex(c, a);
+
+    SecondSplit(a, centerAB, centerCA);
+    SecondSplit(centerAB, b, centerBC);
+    SecondSplit(centerBC, c, centerCA);
+    SecondSplit(centerAB, centerBC, centerCA);
+}
