@@ -27,6 +27,10 @@ public class Player : Entity
     public float dashDir { get; private set; }
 
 
+    public bool isCollision = false;
+    public Vector3 contectNormal = Vector3.zero;
+
+
     //public SkillManager skill { get; private set; }
     //public GameObject sword { get; private set; }
 
@@ -36,6 +40,7 @@ public class Player : Entity
 
     public PlayerIdleState idleState { get; private set; }
     public PlayerMoveState moveState { get; private set; }
+    public PlayerRunState runState { get; private set; }
     public PlayerJumpState jumpState { get; private set; }
     public PlayerAirState airState { get; private set; }
     public PlayerDashState dashState { get; private set; }
@@ -59,8 +64,9 @@ public class Player : Entity
 
         idleState = new PlayerIdleState(this, stateMachine, "Idle");
         moveState = new PlayerMoveState(this, stateMachine, "Move");
+        runState = new PlayerRunState(this, stateMachine, "Run");
         jumpState = new PlayerJumpState(this, stateMachine, "Jump");
-        airState = new PlayerAirState(this, stateMachine, "Jump");
+        airState = new PlayerAirState(this, stateMachine, "Fall");
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         //wallSliderState = new PlayerWallSliderState(this, stateMachine, "WallSlide");
         //wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
@@ -72,6 +78,10 @@ public class Player : Entity
         //catchSwordState = new PlayerCatchSwordState(this, stateMachine, "CatchSword");
 
     }
+
+
+
+
 
     protected override void Start()
     {
@@ -112,6 +122,30 @@ public class Player : Entity
 
     //    Destroy(sword);
     //}
+
+
+    public Vector3 MovingResult(Vector3 Input, Vector3 normal)
+    {
+        Vector3 result;
+
+        result = Input - Vector3.Dot(normal, Input) / Vector3.Dot(normal, normal) * normal;
+
+        return result;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (!IsGroundDetected() || !IsGroundCollision(collision))
+        {
+            contectNormal = collision.contacts[0].normal;
+            isCollision = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        isCollision = false;
+    }
 
 
     public IEnumerator BusyFor(float seconds)

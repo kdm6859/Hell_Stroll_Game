@@ -11,6 +11,9 @@ public class PlayerState
 
     protected float xInput;
     protected float zInput;
+    protected Vector3 dirVec;
+    protected Vector3 moveVec;
+
     private string animBoolName;
 
     protected float stateTimer;
@@ -43,9 +46,9 @@ public class PlayerState
         xInput = Input.GetAxis("Horizontal");
         zInput = Input.GetAxis("Vertical");
 
-        
+        //player.anim.SetFloat("yVelocity", rb.velocity.y);
 
-        Debug.Log(animBoolName);
+        //Debug.Log(animBoolName);
     }
 
     public virtual void FixedUpdate()

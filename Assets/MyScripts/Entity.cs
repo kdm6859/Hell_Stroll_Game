@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
@@ -19,11 +21,14 @@ public class Entity : MonoBehaviour
     [Header("Collision Info")]
     //public Transform attackCheck;
     //public float attackCheckRadius;
-    //[SerializeField] protected Transform wallCheck;
-    //[SerializeField] protected float wallCheckDistance;
     [SerializeField] protected Transform[] groundCheck;
     [SerializeField] protected float groundCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
+    public RaycastHit[] groundHitInfo;
+    [SerializeField] protected Transform wallCheck;
+    [SerializeField] protected float wallCheckRadius;
+    [SerializeField] protected LayerMask whatIsWall;
+    public RaycastHit[] wallHitInfo;
 
 
     //public bool facingRight { get; set; } = true;
@@ -41,6 +46,8 @@ public class Entity : MonoBehaviour
         //fx = GetComponent<EntityFX>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+
+        groundHitInfo = new RaycastHit[groundCheck.Length];
     }
 
     protected virtual void Update()
@@ -93,34 +100,74 @@ public class Entity : MonoBehaviour
     {
         //if (isKnocked)
         //    return;
-
-        rb.velocity = velocity;
+        rb.velocity = Vector3.zero;
+        rb.AddForce(velocity, ForceMode.VelocityChange);
+        //rb.velocity = velocity;
     }
     #endregion
 
     #region Collision
     public virtual bool IsGroundDetected()
     {
+
         for (int i = 0; i < groundCheck.Length; i++)
         {
-            if (Physics.Raycast(groundCheck[i].position, Vector3.down, groundCheckDistance, whatIsGround))
+            if (Physics.Raycast(groundCheck[i].position, Vector3.down, out groundHitInfo[i], groundCheckDistance, whatIsGround))
                 return true;
         }
 
         return false;
     }
 
+    public virtual bool IsGroundCollision(Collision collision)
+    {
+        for (int i = 0; i < groundCheck.Length; i++)
+        {
+            if (groundHitInfo[i].collider == collision.collider)
+                return true;
+        }
 
-    //public virtual bool IsWallDetected()
-    //    => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
+        return false;
+    }
+
+    public virtual bool IsWallDetected()
+    {
+        //wallCollider = Physics.OverlapSphere(wallCheck.position, wallCheckRadius, whatIsWall);
+        //if (wallCollider.Length > 0)
+        //{
+        //    Debug.Log("" + wallCollider[0].)
+        //}
+
+        wallHitInfo = Physics.SphereCastAll(wallCheck.position, wallCheckRadius, wallCheck.forward, 0f, whatIsWall);
+
+        if (wallHitInfo.Length > 0)
+        {
+            //Debug.Log("wallHitInfo.normal : " + wallHitInfo[0].normal);
+            float angle = Vector3.Angle(wallHitInfo[0].normal, Vector3.up);
+            //Debug.Log($"\nangle : {angle}\nnormal : {wallHitInfo[0].normal}\n{wallHitInfo[0].collider.name}");
+            //Debug.Log("wallHitInfo.Length : " + wallHitInfo.Length);
+
+            //if (angle > 65f)
+            //    return true;
+        }
+
+        return false;
+        //.=> Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
+    }
+
 
     protected virtual void OnDrawGizmos()
     {
+        //땅 체크
         for (int i = 0; i < groundCheck.Length; i++)
         {
             Gizmos.DrawLine(groundCheck[i].position, new Vector3(
                 groundCheck[i].position.x, groundCheck[i].position.y - groundCheckDistance, groundCheck[i].position.z));
         }
+
+        ////벽체크
+        //Gizmos.DrawRay(wallCheck.position, wallCheck.forward * 0f);
+        //Gizmos.DrawWireSphere(wallCheck.position + wallCheck.forward * 0f, wallCheckRadius);
 
         //Gizmos.color = Color.red;
 
