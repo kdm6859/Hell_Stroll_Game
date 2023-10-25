@@ -2,13 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CameraMode
+{
+    BasicCamera = 0,
+    BattleCamera = 1
+}
+
 public class Player : Entity
 {
     //[Header("Attack Info")]
     //public Vector2[] attackMovement;
     //public float counterAttackDuration = 0.2f;
 
-    public GameObject playerCamera;
+    [Header("Camera Info")]
+    public GameObject[] playerCameras;
+    public GameObject currentPlayerCamera;
 
     public bool isBusy { get; private set; }
 
@@ -17,7 +25,10 @@ public class Player : Entity
     public float runSpeed = 10f;
     public float rotSpeed = 2f;
     public float jumpForce = 12f;
-    public float swordReturnImpact;
+
+    [Header("Status Info")]
+    public int hp = 1000;
+    public int mp = 100;
 
     [Header("Dash Info")]
     //public float dashUsageTimer;
@@ -26,10 +37,17 @@ public class Player : Entity
     public float dashDuration;
     public float dashDir { get; private set; }
 
+    [Header("Attack Info")]
+    public Transform firePoint;
+    public GameObject attackPrefab;
+    public GameObject skillPrefab;
 
+    [Header("Rest")]
     public bool isCollision = false;
     public Vector3 contectNormal = Vector3.zero;
 
+    public bool isAttack = true;
+    public int comboCount = 0;
 
     //public SkillManager skill { get; private set; }
     //public GameObject sword { get; private set; }
@@ -44,6 +62,7 @@ public class Player : Entity
     public PlayerJumpState jumpState { get; private set; }
     public PlayerAirState airState { get; private set; }
     public PlayerDashState dashState { get; private set; }
+    public PlayerAttackState attackState { get; private set; }
     //public PlayerWallSliderState wallSliderState { get; private set; }
     //public PlayerWallJumpState wallJumpState { get; private set; }
     //public PlayerPrimaryAttackState primaryAttackState { get; private set; }
@@ -68,6 +87,7 @@ public class Player : Entity
         jumpState = new PlayerJumpState(this, stateMachine, "Jump");
         airState = new PlayerAirState(this, stateMachine, "Fall");
         dashState = new PlayerDashState(this, stateMachine, "Dash");
+        attackState = new PlayerAttackState(this, stateMachine, "Attack");
         //wallSliderState = new PlayerWallSliderState(this, stateMachine, "WallSlide");
         //wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
 
@@ -87,10 +107,19 @@ public class Player : Entity
     {
         base.Start();
 
+        for (int i = 0; i < playerCameras.Length; i++)
+        {
+            playerCameras[i].SetActive(false);
+        }
+        currentPlayerCamera = playerCameras[(int)CameraMode.BasicCamera];
+        currentPlayerCamera.SetActive(true);
+
         //skill = SkillManager.instance;
 
         stateMachine.Initialize(idleState);
 
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     protected override void Update()
@@ -99,6 +128,15 @@ public class Player : Entity
 
         stateMachine.currentState.Update();
 
+        //마우스 커서 숨김
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.visible = !Cursor.visible;
+            if (Cursor.visible)
+                Cursor.lockState = CursorLockMode.None;
+            else
+                Cursor.lockState = CursorLockMode.Locked;
+        }
         //CheckForDashInput();
 
     }
@@ -181,10 +219,40 @@ public class Player : Entity
 
     }
 
+    public void CameraChange(CameraMode cameraMode)
+    {
+        //이전의 카메라 rotation값 저장
+        Quaternion tempCamRot = currentPlayerCamera.transform.rotation;
+
+        //카메라 전환
+        currentPlayerCamera.SetActive(false);
+        currentPlayerCamera = playerCameras[(int)cameraMode];
+        currentPlayerCamera.SetActive(true);
+
+        //이전의 카메라 rotation값 현재 카메라에 대입
+        currentPlayerCamera.transform.rotation = tempCamRot;
+    }
 
 
+    public void IsAttack_True()
+    {
+        isAttack = true;
+    }
 
+    public void AttackEnd()
+    {
+        if (comboCount >= 3)
+        {
+            stateMachine.ChangeState(idleState);
+        }
+        else if (isAttack)
+            stateMachine.ChangeState(idleState);
+    }
 
+    public void Attack()
+    {
+        Instantiate(attackPrefab, firePoint.position, transform.rotation);
+    }
 
 }
 
