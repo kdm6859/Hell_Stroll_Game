@@ -48,6 +48,7 @@ public class PlayerGroundedState : PlayerState
         {
             stateMachine.ChangeState(player.attackState);
         }
+
     }
 
     public override void FixedUpdate()

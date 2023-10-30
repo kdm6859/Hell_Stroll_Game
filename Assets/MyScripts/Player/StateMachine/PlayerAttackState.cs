@@ -22,16 +22,19 @@ public class PlayerAttackState : PlayerGroundedState
         player.isAttack = false;
         player.comboCount = 1;
         player.anim.SetInteger("ComboCount", player.comboCount);
+        player.anim.SetInteger("AttackForm", player.attackFormNum);
         player.transform.rotation = Quaternion.Euler(player.transform.rotation.eulerAngles.x, player.currentPlayerCamera.transform.rotation.eulerAngles.y, player.transform.rotation.eulerAngles.z);
 
         //player.currentPlayerCamera.GetComponent<CinemachineVirtualCamera>().AddCinemachineComponent<CinemachinePOV>().m_HorizontalAxis.Value = 30f;
-        player.currentPlayerCamera.GetComponent<CinemachineVirtualCamera>().AddCinemachineComponent<CinemachinePOV>().enabled = false;
+        ///player.currentPlayerCamera.GetComponent<CinemachineVirtualCamera>().AddCinemachineComponent<CinemachinePOV>().enabled = false;
     }
 
     public override void Update()
     {
         base.Update();
 
+        if (player.stateMachine.currentState.GetType() != this.GetType())
+            return;
         ////캐릭터 방향 설정
         //dirVec = new Vector3(xInput, 0, zInput);
         //dirVec.Normalize();
@@ -39,7 +42,7 @@ public class PlayerAttackState : PlayerGroundedState
         //if (dirVec != Vector3.zero)
         //    player.transform.rotation = Quaternion.Euler(player.transform.rotation.eulerAngles.x, player.playerCamera.transform.rotation.eulerAngles.y + rot.eulerAngles.y, player.transform.rotation.eulerAngles.z);
 
-        
+
 
         if (Input.GetButtonDown("Fire1") && player.isAttack)
         {

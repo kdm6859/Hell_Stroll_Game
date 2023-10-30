@@ -37,7 +37,9 @@ public class PlayerMoveState : PlayerGroundedState
     public override void Update()
     {
         base.Update();
-        //moveVec = player.transform.forward * zInput * player.moveSpeed;
+
+        if (player.stateMachine.currentState.GetType() != this.GetType())
+            return;
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -53,7 +55,6 @@ public class PlayerMoveState : PlayerGroundedState
 
         float xInputAbs = Mathf.Abs(xInput);
         float zInputAbs = Mathf.Abs(zInput);
-
 
         if (player.isCollision)
         {
@@ -76,8 +77,11 @@ public class PlayerMoveState : PlayerGroundedState
             moveTimer += Time.deltaTime;
 
             if (moveTimer > 0.1f)
+            {
                 player.stateMachine.ChangeState(player.idleState);
+            }
         }
+                
         else
         {
             moveTimer = 0;

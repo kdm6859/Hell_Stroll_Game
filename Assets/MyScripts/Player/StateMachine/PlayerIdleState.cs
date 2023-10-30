@@ -22,12 +22,15 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.Update();
 
+        if (player.stateMachine.currentState.GetType() != this.GetType())
+            return;
+
         //if (xInput == player.facingDir && player.IsWallDetected())
         //{
         //    return;
         //}
 
-        
+
 
 
         if (xInput != 0 || zInput != 0)//&& !player.isBusy)

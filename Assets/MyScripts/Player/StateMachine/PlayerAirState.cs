@@ -18,6 +18,9 @@ public class PlayerAirState : PlayerState
     {
         base.Update();
 
+        if (player.stateMachine.currentState.GetType() != this.GetType())
+            return;
+
         //if (player.IsWallDetected())
         //{
         //    stateMachine.ChangeState(player.wallSliderState);

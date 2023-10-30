@@ -26,6 +26,9 @@ public class PlayerDashState : PlayerState
     {
         base.Update();
 
+        if (player.stateMachine.currentState.GetType() != this.GetType())
+            return;
+
         //if (!player.IsGroundDetected() && player.IsWallDetected())
         //{
         //    stateMachine.ChangeState(player.wallSliderState);

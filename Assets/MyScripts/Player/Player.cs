@@ -20,16 +20,6 @@ public class Player : Entity
 
     public bool isBusy { get; private set; }
 
-    [Header("Move Info")]
-    public float moveSpeed = 6f;
-    public float runSpeed = 10f;
-    public float rotSpeed = 2f;
-    public float jumpForce = 12f;
-
-    [Header("Status Info")]
-    public int hp = 1000;
-    public int mp = 100;
-
     [Header("Dash Info")]
     //public float dashUsageTimer;
     //[SerializeField] float dashCooldown;
@@ -38,7 +28,11 @@ public class Player : Entity
     public float dashDir { get; private set; }
 
     [Header("Attack Info")]
-    public Transform firePoint;
+    AttackFormManager attackFormManager;
+    AttackForm currentAttackForm;
+    public int attackFormNum = 0;
+    public GameObject[] weapons;
+    public Transform[] firePoints;
     public GameObject attackPrefab;
     public GameObject skillPrefab;
 
@@ -113,6 +107,14 @@ public class Player : Entity
         }
         currentPlayerCamera = playerCameras[(int)CameraMode.BasicCamera];
         currentPlayerCamera.SetActive(true);
+        
+        attackFormManager = AttackFormManager.instance;
+        currentAttackForm = attackFormManager.SetAttackForm(attackFormNum);
+        for(int i = 0; i < weapons.Length; i++)
+        {
+            weapons[i].SetActive(false);
+        }
+        weapons[attackFormNum].SetActive(true);
 
         //skill = SkillManager.instance;
 
@@ -138,6 +140,21 @@ public class Player : Entity
                 Cursor.lockState = CursorLockMode.Locked;
         }
         //CheckForDashInput();
+
+        //¾îÅÃÆû ÀüÈ¯
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            weapons[attackFormNum].SetActive(false);
+
+            attackFormNum++;
+            if(attackFormNum >= attackFormManager.AttackFormsMaxNum())
+            {
+                attackFormNum = 0;
+            }
+
+            weapons[attackFormNum].SetActive(true);
+            currentAttackForm = attackFormManager.SetAttackForm(attackFormNum);
+        }
 
     }
 
@@ -241,17 +258,22 @@ public class Player : Entity
 
     public void AttackEnd()
     {
-        if (comboCount >= 3)
+        if (comboCount >= currentAttackForm.attackFormData.comboMaxCount)
         {
             stateMachine.ChangeState(idleState);
         }
         else if (isAttack)
+        {
             stateMachine.ChangeState(idleState);
+        }
+
     }
 
     public void Attack()
     {
-        Instantiate(attackPrefab, firePoint.position, transform.rotation);
+        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, attackPower);
+
+        //Instantiate(attackPrefab, firePoint.position, transform.rotation);
     }
 
 }

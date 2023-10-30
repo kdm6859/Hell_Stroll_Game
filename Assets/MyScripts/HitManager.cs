@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackController : MonoBehaviour
+public class HitManager : MonoBehaviour
 {
+    public Entity entity;
+
     // Start is called before the first frame update
     void Start()
     {

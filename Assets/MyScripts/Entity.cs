@@ -30,6 +30,17 @@ public class Entity : MonoBehaviour
     [SerializeField] protected LayerMask whatIsWall;
     public RaycastHit[] wallHitInfo;
 
+    [Header("Move Info")]
+    public float moveSpeed = 6f;
+    public float runSpeed = 10f;
+    public float rotSpeed = 2f;
+    public float jumpForce = 12f;
+
+    [Header("Status Info")]
+    public int hp = 1000;
+    public int mp = 100;
+    public int attackPower = 10;
+
 
     //public bool facingRight { get; set; } = true;
     //public int facingDir { get; set; } = 1;
@@ -60,7 +71,7 @@ public class Entity : MonoBehaviour
 
     }
 
-    public virtual void Damage()
+    public virtual void Damage(int attackPower)
     {
         //fx.StartCoroutine("FlashFX");
         //StartCoroutine("HitKnockback");

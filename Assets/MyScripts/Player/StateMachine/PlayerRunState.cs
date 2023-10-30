@@ -19,11 +19,14 @@ public class PlayerRunState : PlayerGroundedState
     {
         base.Update();
 
+        if (player.stateMachine.currentState.GetType() != this.GetType())
+            return;
+
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             player.stateMachine.ChangeState(player.moveState);
         }
-        Debug.Log("run");
+
         //캐릭터 방향 설정
         dirVec = new Vector3(xInput, 0, zInput);
         dirVec.Normalize();
