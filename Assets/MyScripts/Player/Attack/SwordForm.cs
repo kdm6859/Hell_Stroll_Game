@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class SwordForm : AttackForm
 {
+    [SerializeField] GameObject SwordEnergyCore;
+    GameObject aura = null;
+
     public override void Attack(Transform entity, Transform firePoint, int comboNum, int attackPower)
     {
         base.Attack(entity, firePoint, comboNum, attackPower);
 
         GameObject attack;
-
+        float magnifyingPower = 1f;
 
 
         if (comboNum == 1)
@@ -20,6 +24,8 @@ public class SwordForm : AttackForm
             attack = Instantiate(attackFormData.attackPrefabs[0], new Vector3(entity.position.x, entity.position.y + 1.2f, entity.position.z), rot);
             attack.transform.localScale = new Vector3(-attack.transform.localScale.x, attack.transform.localScale.y, attack.transform.localScale.z);
             attack.transform.localScale *= 1.5f;
+
+            magnifyingPower = 1.2f;
         }
         else if (comboNum == 2)
         {
@@ -31,6 +37,8 @@ public class SwordForm : AttackForm
             attack = Instantiate(attackFormData.attackPrefabs[0], new Vector3(entity.position.x, entity.position.y + 1.6f, entity.position.z), rot);
             attack.transform.localScale = new Vector3(-attack.transform.localScale.x, attack.transform.localScale.y, attack.transform.localScale.z);
             attack.transform.localScale *= 1.5f;
+
+            magnifyingPower = 1.2f;
         }
         else if (comboNum >= 3)
         {
@@ -40,10 +48,45 @@ public class SwordForm : AttackForm
             attack = Instantiate(attackFormData.attackPrefabs[0], new Vector3(entity.position.x, entity.position.y + 1.2f, entity.position.z), rot);
             attack.transform.localScale = new Vector3(-attack.transform.localScale.x, attack.transform.localScale.y, attack.transform.localScale.z);
             attack.transform.localScale *= 2.5f;
+
+            magnifyingPower = 1.5f;
         }
         else
             return;
 
-        attack.GetComponent<SwordHit>().SetAttackPower(attackPower);
+        attack.GetComponent<SwordHit>().SetAttackPower(attackPower, magnifyingPower);
+    }
+
+    public override void Skill(Transform entity, Transform firePoint, int attackPower)
+    {
+        base.Skill(entity, firePoint, attackPower);
+
+        GameObject skill;
+        float magnifyingPower = 15f;
+
+        SwordEnergyCore.SetActive(false);
+        if (aura != null)
+        {
+            aura.SetActive(false);
+        }
+
+        Quaternion rot = Quaternion.Euler(entity.rotation.eulerAngles.x, entity.rotation.eulerAngles.y, -90f);
+        skill = Instantiate(attackFormData.skillPrefabs[0], new Vector3(entity.position.x, entity.position.y + 1.2f, entity.position.z), rot);
+        //attack.transform.localScale = new Vector3(-attack.transform.localScale.x, attack.transform.localScale.y, attack.transform.localScale.z);
+        skill.transform.localScale *= 4f;
+
+        skill.GetComponent<SwordHit>().SetAttackPower(attackPower, magnifyingPower);
+
+        skill.GetComponent<Rigidbody>().AddForce(skill.transform.forward * 60f, ForceMode.Impulse);
+
+    }
+
+    public void SkillCharging(GameObject aura)
+    {
+        this.aura = aura;
+
+        SwordEnergyCore.SetActive(true);
+        aura.SetActive(true);
+
     }
 }

@@ -44,9 +44,14 @@ public class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.jumpState);
         }
 
-        if (Input.GetButtonDown("Fire1") && stateMachine.currentState != player.attackState && player.isAttack && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
+        if (Input.GetButtonDown("Fire1") && stateMachine.currentState != player.attackState && player.isAttack)// && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
         {
             stateMachine.ChangeState(player.attackState);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E) && stateMachine.currentState != player.skillState && player.isAttack && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordSkill"))
+        {
+            stateMachine.ChangeState(player.skillState);
         }
 
     }

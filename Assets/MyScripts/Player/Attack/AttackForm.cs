@@ -26,5 +26,8 @@ public class AttackForm : MonoBehaviour
 
     }
 
+    public virtual void Skill(Transform entity, Transform firePoint, int attackPower)
+    {
 
+    }
 }

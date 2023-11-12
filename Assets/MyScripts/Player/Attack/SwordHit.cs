@@ -11,9 +11,10 @@ public class SwordHit : AttackHit
         Destroy(gameObject, 1f);
     }
 
-    public void SetAttackPower(int attackPower)
+    public override void SetAttackPower(int attackPower,float magnifyingPower)
     {
-        this.attackPower = (int)(attackPower * magnifyingPower);
+        base.SetAttackPower(attackPower, magnifyingPower);
+        //this.attackPower = (int)(attackPower * magnifyingPower);
     }
 
     protected override void OnTriggerEnter(Collider other)

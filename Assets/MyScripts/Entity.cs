@@ -76,7 +76,7 @@ public class Entity : MonoBehaviour
         //fx.StartCoroutine("FlashFX");
         //StartCoroutine("HitKnockback");
 
-        Debug.Log(gameObject.name + "데미지");
+        Debug.Log(gameObject.name + " : 데미지");
     }
 
     //protected virtual IEnumerator HitKnockback()

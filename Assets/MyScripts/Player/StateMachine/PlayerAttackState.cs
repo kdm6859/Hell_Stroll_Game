@@ -44,7 +44,7 @@ public class PlayerAttackState : PlayerGroundedState
 
 
 
-        if (Input.GetButtonDown("Fire1") && player.isAttack)
+        if (Input.GetButtonDown("Fire1") && player.isAttack && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
         {
             player.isAttack = false;
             player.comboCount++;

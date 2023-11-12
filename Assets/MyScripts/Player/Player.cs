@@ -43,6 +43,10 @@ public class Player : Entity
     public bool isAttack = true;
     public int comboCount = 0;
 
+    [SerializeField] GameObject aura;
+    [SerializeField] GameObject magicCircle;
+    
+
     //public SkillManager skill { get; private set; }
     //public GameObject sword { get; private set; }
 
@@ -57,6 +61,7 @@ public class Player : Entity
     public PlayerAirState airState { get; private set; }
     public PlayerDashState dashState { get; private set; }
     public PlayerAttackState attackState { get; private set; }
+    public PlayerSkillState skillState { get; private set; }
     //public PlayerWallSliderState wallSliderState { get; private set; }
     //public PlayerWallJumpState wallJumpState { get; private set; }
     //public PlayerPrimaryAttackState primaryAttackState { get; private set; }
@@ -64,9 +69,6 @@ public class Player : Entity
     //public PlayerAimSwordState aimSwordState { get; private set; }
     //public PlayerCatchSwordState catchSwordState { get; private set; }
     #endregion
-
-
-
 
 
     protected override void Awake()
@@ -82,6 +84,7 @@ public class Player : Entity
         airState = new PlayerAirState(this, stateMachine, "Fall");
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         attackState = new PlayerAttackState(this, stateMachine, "Attack");
+        skillState = new PlayerSkillState(this, stateMachine, "Skill");
         //wallSliderState = new PlayerWallSliderState(this, stateMachine, "WallSlide");
         //wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
 
@@ -92,10 +95,6 @@ public class Player : Entity
         //catchSwordState = new PlayerCatchSwordState(this, stateMachine, "CatchSword");
 
     }
-
-
-
-
 
     protected override void Start()
     {
@@ -250,6 +249,10 @@ public class Player : Entity
         currentPlayerCamera.transform.rotation = tempCamRot;
     }
 
+    public AttackForm CurrentAttackForm()
+    {
+        return currentAttackForm;
+    }
 
     public void IsAttack_True()
     {
@@ -258,15 +261,14 @@ public class Player : Entity
 
     public void AttackEnd()
     {
-        if (comboCount >= currentAttackForm.attackFormData.comboMaxCount)
+        if (comboCount >= currentAttackForm.attackFormData.comboMaxCount) //최대 콤보에 도달하면
         {
             stateMachine.ChangeState(idleState);
         }
-        else if (isAttack)
+        else if (isAttack) //콤보 중간에 공격입력을 멈추면
         {
             stateMachine.ChangeState(idleState);
         }
-
     }
 
     public void Attack()
@@ -276,5 +278,30 @@ public class Player : Entity
         //Instantiate(attackPrefab, firePoint.position, transform.rotation);
     }
 
+    public void Skill()
+    {
+        currentAttackForm.Skill(transform, firePoints[attackFormNum], attackPower);
+    }
+
+    public void MagicSkillEnd()
+    {
+        if (currentAttackForm.GetType() == typeof(MagicForm))
+        {
+            ((MagicForm)currentAttackForm).IsSkill_False();
+        }
+    }
+
+    public void SwordSkillAura()
+    {
+        if (currentAttackForm.GetType() == typeof(SwordForm))
+        {
+            ((SwordForm)currentAttackForm).SkillCharging(aura);
+        }
+    }
+
+    public void SkillEnd()
+    {
+        stateMachine.ChangeState(idleState);
+    }
 }
 
