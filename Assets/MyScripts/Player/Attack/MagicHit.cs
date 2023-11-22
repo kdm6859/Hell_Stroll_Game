@@ -42,10 +42,12 @@ public class MagicHit : AttackHit
     //레이저 공격
     IEnumerator LaserHit()
     {
+        Debug.Log("레이저 공격");
         while (true)
         {
             Collider[] hitColliders = Physics.OverlapBox(transform.GetComponent<BoxCollider>().bounds.center, transform.GetComponent<BoxCollider>().size / 2, transform.rotation, layerMask);
-
+            if (hitColliders.Length <= 0)
+                Debug.Log("레이저 감지안됨");
             for (int i = 0; i < hitColliders.Length; i++)
             {
                 hitColliders[i].GetComponent<Enemy>().Damage(attackPower);

@@ -33,8 +33,8 @@ public class Player : Entity
     public int attackFormNum = 0;
     public GameObject[] weapons;
     public Transform[] firePoints;
-    public GameObject attackPrefab;
-    public GameObject skillPrefab;
+    //public GameObject attackPrefab;
+    //public GameObject skillPrefab;
 
     [Header("Rest")]
     public bool isCollision = false;
@@ -302,6 +302,17 @@ public class Player : Entity
     public void SkillEnd()
     {
         stateMachine.ChangeState(idleState);
+    }
+
+    public override void Damage(int attackPower)
+    {
+        base.Damage(attackPower);
+
+        hp -= attackPower;
+        if (hp <= 0)
+        {
+            Debug.Log("플레이어 죽음");
+        }
     }
 }
 
