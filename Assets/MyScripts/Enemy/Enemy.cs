@@ -37,8 +37,10 @@ public class Enemy : Entity
     //[SerializeField] GameObject aura;
     //[SerializeField] GameObject magicCircle;
 
-    public EnemyMovePoint moveArea;
-    public Vector3[] movePoint { get; private set; }
+    //public EnemyMovePoint moveArea;
+    //public Vector3[] movePoint { get; private set; }
+    public MovePoints moveArea { get; set; }
+    bool isSetArea = false;
     public int movePointNum { get; set; } = 0;
     public int movePointNum_Max { get; private set; } = 0;
 
@@ -107,20 +109,32 @@ public class Enemy : Entity
 
 
 
-        if (!EnemyMovePointManager.instance.SetArea(out moveArea))
-            Destroy(gameObject);
+        //if (!EnemyMovePointManager.instance.SetArea(out moveArea))
+        //    Destroy(gameObject);
 
-        movePointNum_Max = moveArea.MovePoints.Length;
-        movePoint = new Vector3[movePointNum_Max];
+        //movePointNum_Max = moveArea.MovePoints.Length;
+        //movePoint = new Vector3[movePointNum_Max];
 
-        for (int i = 0; i < movePointNum_Max; i++)
-        {
-            movePoint[i] = moveArea.MovePoints[i].position;
-        }
+        //for (int i = 0; i < movePointNum_Max; i++)
+        //{
+        //    movePoint[i] = moveArea.MovePoints[i].position;
+        //}
+    }
+
+    //Enemy 이동 경로 설정
+    public void SetArea(MovePoints pointPositions)
+    {
+        moveArea = pointPositions;
+        movePointNum_Max = moveArea.PointPositions.Count;
+        isSetArea = true;
     }
 
     protected override void Update()
     {
+        //이동 경로 설정 시 동작
+        if (!isSetArea)
+            return;
+
         base.Update();
 
         stateMachine.currentState.Update();

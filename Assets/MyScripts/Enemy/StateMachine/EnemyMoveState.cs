@@ -19,7 +19,7 @@ public class EnemyMoveState : EnemyGroundedState
 
         enemy.agent.stoppingDistance = 0f;
         enemy.agent.speed = 3.5f;
-        enemy.agent.SetDestination(enemy.movePoint[enemy.movePointNum]);
+        enemy.agent.SetDestination(enemy.moveArea.PointPositions[enemy.movePointNum]);
     }
 
     public override void Update()
@@ -33,13 +33,14 @@ public class EnemyMoveState : EnemyGroundedState
 
         ////캐릭터 방향 설정
         //enemy.transform.LookAt(movePoint);
-
+        Debug.Log(enemy.agent.remainingDistance);
         if (enemy.DistanceCheck(DistanceCheckType.Chase))
         {
             enemy.stateMachine.ChangeState(enemy.runState);
         }
         else if (enemy.agent.remainingDistance <= 0.1f)
         {
+            Debug.Log("남은 거리 : " + enemy.agent.remainingDistance);
             enemy.stateMachine.ChangeState(enemy.idleState);
         }
     }

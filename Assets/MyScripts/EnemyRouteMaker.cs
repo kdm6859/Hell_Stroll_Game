@@ -1,40 +1,51 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-public class PointPositions
+[Serializable]
+public class MovePoints
 {
-    public List<Vector3> pointPositions { get; set; } = new List<Vector3>();
+    [SerializeField] List<Vector3> pointPositions = new List<Vector3>();
+    public List<Vector3> PointPositions { get { return pointPositions; } set { pointPositions = value; } }
 }
 
 public class EnemyRouteMaker : MonoBehaviour
 {
-    public static EnemyRouteMaker instance;
+    //public static EnemyRouteMaker instance;
 
-    [SerializeField] public GameObject pointPrefab;
+    [SerializeField] public GameObject enemyPrefab;
+
     public int manualFontSize = 13;
     //public List<GameObject> points { get; set; } = new List<GameObject>();
-    public List<PointPositions> enemyMoveArea { get; set; } = new List<PointPositions>();
-    public int enemyMoveAreaIndex { get; set; } = 0;
+    [SerializeField] List<MovePoints> enemyMoveArea = new List<MovePoints>();
+    [SerializeField] int enemyMoveAreaIndex = 0;
+    public List<MovePoints> EnemyMoveArea { get { return enemyMoveArea; } set { enemyMoveArea = value; } }
+    public int EnemyMoveAreaIndex { get { return enemyMoveAreaIndex; } set { enemyMoveAreaIndex = value; } } 
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
+    //private void Awake()
+    //{
+    //    if (instance == null)
+    //    {
+    //        instance = this;
+    //    }
+    //    else
+    //    {
+    //        Destroy(this.gameObject);
+    //    }
 
-    }
+    //}
 
     // Start is called before the first frame update
     void Start()
     {
-
+        Debug.Log("??????????");
+        for (int i = 0; i < enemyMoveArea.Count; i++)
+        {
+            Debug.Log("Àû »ý¼º!!");
+            Instantiate(enemyPrefab, enemyMoveArea[i].PointPositions[0], Quaternion.identity).GetComponent<Enemy>().SetArea(enemyMoveArea[i]);
+        }
     }
 
     // Update is called once per frame
@@ -54,16 +65,16 @@ public class EnemyRouteMaker : MonoBehaviour
         {
             for (int i = 0; i < enemyMoveArea.Count; i++)
             {
-                for (int j = 0; j < enemyMoveArea[i].pointPositions.Count; j++)
+                for (int j = 0; j < enemyMoveArea[i].PointPositions.Count; j++)
                 {
                     if (i == enemyMoveAreaIndex)
                     {
                         Gizmos.color = Color.green;
-                        Gizmos.DrawLineStrip(enemyMoveArea[i].pointPositions.ToArray(), true);
+                        Gizmos.DrawLineStrip(enemyMoveArea[i].PointPositions.ToArray(), true);
                         Gizmos.color = Color.red;
                     }
                     else
-                        Gizmos.DrawLineStrip(enemyMoveArea[i].pointPositions.ToArray(), true);
+                        Gizmos.DrawLineStrip(enemyMoveArea[i].PointPositions.ToArray(), true);
                 }
             }
 
