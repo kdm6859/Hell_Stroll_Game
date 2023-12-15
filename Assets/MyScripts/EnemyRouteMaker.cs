@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -20,10 +21,10 @@ public class EnemyRouteMaker : MonoBehaviour
     public int manualFontSize = 13;
     //public List<GameObject> points { get; set; } = new List<GameObject>();
     [SerializeField] List<MovePoints> enemyMoveArea = new List<MovePoints>();
-    [SerializeField] int enemyMoveAreaIndex = 0;
+    int enemyMoveAreaIndex = 0;
     public List<MovePoints> EnemyMoveArea { get { return enemyMoveArea; } set { enemyMoveArea = value; } }
     public int EnemyMoveAreaIndex { get { return enemyMoveAreaIndex; } set { enemyMoveAreaIndex = value; } } 
-
+    
     //private void Awake()
     //{
     //    if (instance == null)
@@ -47,7 +48,6 @@ public class EnemyRouteMaker : MonoBehaviour
             Instantiate(enemyPrefab, enemyMoveArea[i].PointPositions[0], Quaternion.identity).GetComponent<Enemy>().SetArea(enemyMoveArea[i]);
         }
     }
-
     // Update is called once per frame
     void Update()
     {

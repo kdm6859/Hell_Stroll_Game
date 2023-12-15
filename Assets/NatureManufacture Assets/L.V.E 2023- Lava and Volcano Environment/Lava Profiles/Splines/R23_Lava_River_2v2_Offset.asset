@@ -76,6 +76,7 @@ MonoBehaviour:
   triangleDensity: 16
   uvScale: 1
   uvUseFixedTile: 0
+  uvFixedWidth: 4
   uvFixedTileLerp: 1
   uvRotation: 0
   snapMask:

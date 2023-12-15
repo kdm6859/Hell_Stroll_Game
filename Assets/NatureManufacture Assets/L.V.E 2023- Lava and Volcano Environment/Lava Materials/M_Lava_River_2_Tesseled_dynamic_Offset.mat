@@ -9,10 +9,14 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Lava_River_2_Tesseled_dynamic_Offset
   m_Shader: {fileID: 4800000, guid: e3c21255a9f890b4c97d777b47f9178e, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _Dynamic_Flow
+  - _UVVDIRECTION1UDIRECTION0_ON
+  m_InvalidKeywords:
   - _DISABLE_SSR_TRANSPARENT
   - _TESSELLATION_PHONG
-  m_InvalidKeywords: []
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -25,6 +29,7 @@ Material:
   - TransparentDepthPrepass
   - TransparentDepthPostpass
   - RayTracingPrepass
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
