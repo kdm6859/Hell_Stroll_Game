@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 
 [Flags]
@@ -18,7 +20,7 @@ enum asd
 }
 public class PlayerMoveState : PlayerGroundedState
 {
-    
+
 
     public PlayerMoveState(Player player, PlayerStateMachine stateMachine, string animBoolName)
         : base(player, stateMachine, animBoolName)
@@ -56,7 +58,7 @@ public class PlayerMoveState : PlayerGroundedState
         float xInputAbs = Mathf.Abs(xInput);
         float zInputAbs = Mathf.Abs(zInput);
 
-        if (player.isCollision)
+        if (player.isCollision) //º®¿¡ ºÎµóÈú °æ¿ì
         {
             //moveVec = player.contectNormal + player.transform.forward;
             moveVec = player.MovingResult(player.transform.forward, player.contectNormal) * player.moveSpeed * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);

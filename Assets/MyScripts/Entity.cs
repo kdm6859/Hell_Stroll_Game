@@ -111,8 +111,11 @@ public class Entity : MonoBehaviour
     {
         //if (isKnocked)
         //    return;
-        rb.velocity = Vector3.zero;
-        rb.AddForce(velocity, ForceMode.VelocityChange);
+        //rb.velocity = Vector3.zero;
+
+        Vector3 addVelocity = velocity - rb.velocity;
+
+        rb.AddForce(addVelocity, ForceMode.VelocityChange);
         //rb.velocity = velocity;
     }
     #endregion

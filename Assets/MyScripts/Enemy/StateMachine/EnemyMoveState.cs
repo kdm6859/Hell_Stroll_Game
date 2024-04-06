@@ -33,7 +33,7 @@ public class EnemyMoveState : EnemyGroundedState
 
         ////캐릭터 방향 설정
         //enemy.transform.LookAt(movePoint);
-        Debug.Log(enemy.agent.remainingDistance);
+        //Debug.Log(enemy.agent.remainingDistance);
         if (enemy.DistanceCheck(DistanceCheckType.Chase))
         {
             enemy.stateMachine.ChangeState(enemy.runState);
