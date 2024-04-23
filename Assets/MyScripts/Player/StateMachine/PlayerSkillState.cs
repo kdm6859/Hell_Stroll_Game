@@ -13,7 +13,7 @@ public class PlayerSkillState : PlayerGroundedState
         base.Enter();
 
         player.CameraChange(CameraMode.BattleCamera);
-        player.isAttack = false;
+        player.IsAttack = true;
         player.transform.rotation = Quaternion.Euler(player.transform.rotation.eulerAngles.x, player.currentPlayerCamera.transform.rotation.eulerAngles.y, player.transform.rotation.eulerAngles.z);
 
         player.anim.SetInteger("AttackForm", player.attackFormNum);
@@ -62,7 +62,7 @@ public class PlayerSkillState : PlayerGroundedState
     {
         base.Exit();
 
-        player.isAttack = true;
+        player.IsAttack = false;
 
         player.CameraChange(CameraMode.BasicCamera);
     }

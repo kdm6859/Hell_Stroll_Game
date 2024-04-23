@@ -23,8 +23,8 @@ public class SwordHit : AttackHit
 
         if (other.CompareTag("Enemy"))
         {
-            other.GetComponent<Enemy>().Damage(attackPower);
-            Debug.Log("attackPower : " + attackPower);
+            other.GetComponent<IDamageable>().TakeDamage(damage);
+            Debug.Log("damage : " + damage);
         }
     }
 

@@ -29,9 +29,12 @@ Material:
   - _METALLICSPECGLOSSMAP
   m_InvalidKeywords:
   - _EMISSIVE_COLOR_MAP
+  - _IS_CLIPPING_OFF
+  - _IS_OUTLINE_CLIPPING_NO
   - _MASKMAP
   - _METALLICGLOSSMAP
   - _NORMALMAP_TANGENT_SPACE
+  - _OUTLINE_NML
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0

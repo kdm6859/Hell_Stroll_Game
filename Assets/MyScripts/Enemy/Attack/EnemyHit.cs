@@ -10,7 +10,7 @@ public class EnemyHit : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<Player>().Damage(attackPower);
+            other.GetComponent<IDamageable>().TakeDamage(attackPower);
         }
     }
 }

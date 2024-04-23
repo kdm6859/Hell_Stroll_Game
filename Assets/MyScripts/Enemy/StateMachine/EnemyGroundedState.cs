@@ -28,7 +28,7 @@ public class EnemyGroundedState : EnemyState
         //    stateMachine.ChangeState(enemy.jumpState);
         //}
 
-        if (enemy.DistanceCheck(DistanceCheckType.Attack) && stateMachine.currentState != enemy.attackState && enemy.isAttack)
+        if (enemy.DistanceCheck(DistanceCheckType.Attack) && stateMachine.currentState != enemy.attackState && enemy.IsAttack)
         {
             stateMachine.ChangeState(enemy.attackState);
         }

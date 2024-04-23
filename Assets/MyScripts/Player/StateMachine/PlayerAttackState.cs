@@ -19,7 +19,7 @@ public class PlayerAttackState : PlayerGroundedState
 
         player.CameraChange(CameraMode.BattleCamera);
 
-        player.isAttack = false;
+        player.IsAttack = true;
         player.comboCount = 1;
         player.anim.SetInteger("ComboCount", player.comboCount);
         player.anim.SetInteger("AttackForm", player.attackFormNum);
@@ -44,9 +44,9 @@ public class PlayerAttackState : PlayerGroundedState
 
 
 
-        if (Input.GetButtonDown("Fire1") && player.isAttack && player.comboCount < player.CurrentAttackForm().attackFormData.comboMaxCount && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
+        if (Input.GetButtonDown("Fire1") && !player.IsAttack && player.comboCount < player.GetCurrentAttackForm().attackFormData.comboMaxCount && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
         {
-            player.isAttack = false;
+            player.IsAttack = true;
             player.comboCount++;
             player.anim.SetInteger("ComboCount", player.comboCount);
             player.transform.rotation = Quaternion.Euler(player.transform.rotation.eulerAngles.x, player.currentPlayerCamera.transform.rotation.eulerAngles.y, player.transform.rotation.eulerAngles.z);
@@ -65,7 +65,7 @@ public class PlayerAttackState : PlayerGroundedState
         base.Exit();
 
         player.comboCount = 0;
-        player.isAttack = true;
+        player.IsAttack = false;
 
         player.CameraChange(CameraMode.BasicCamera);
     }

@@ -6,7 +6,7 @@ public class AttackHit : MonoBehaviour
 {
     protected const int enemyLayer = 6;
 
-    protected int attackPower = 1;
+    protected int damage = 1;
 
     protected virtual void Start()
     {
@@ -15,7 +15,7 @@ public class AttackHit : MonoBehaviour
 
     public virtual void SetAttackPower(int attackPower, float magnifyingPower)
     {
-        this.attackPower = (int)(attackPower * magnifyingPower);
+        this.damage = (int)(attackPower * magnifyingPower);
     }
 
     protected virtual void OnTriggerEnter(Collider other)

@@ -9,7 +9,7 @@ public enum CameraMode
     BattleCamera = 1
 }
 
-public class Player : Entity
+public class Player : Entity, IUnitStats, IDamageable, IAttackable
 {
     //[Header("Attack Info")]
     //public Vector2[] attackMovement;
@@ -37,16 +37,51 @@ public class Player : Entity
     //public GameObject attackPrefab;
     //public GameObject skillPrefab;
 
+
+    [Header("Status Info")]
+    [SerializeField]
+    protected int maxHealthPoint = 1000;
+    public int MaxHealthPoint { get { return maxHealthPoint; } set { maxHealthPoint = value; } }
+    [SerializeField]
+    protected int healthPoint;
+    public int HealthPoint { get { return healthPoint; } set { healthPoint = value; } }
+    [SerializeField]
+    protected int maxManaPoint = 100;
+    public int MaxManaPoint { get { return maxManaPoint; } set { maxManaPoint = value; } }
+    [SerializeField]
+    protected int manaPoint;
+    public int ManaPoint { get { return manaPoint; } set { manaPoint = value; } }
+    [SerializeField]
+    protected int attackPower = 10;
+    public int AttackPower { get { return attackPower; } set { attackPower = value; } }
+    [SerializeField]
+    protected int defense = 0;
+    public int Defense { get { return defense; } set { defense = value; } }
+    [SerializeField]
+    protected int strength = 1;
+    public int Strength { get { return strength; } set { strength = value; } }
+    [SerializeField]
+    protected int dexterity = 1;
+    public int Dexterity { get { return dexterity; } set { dexterity = value; } }
+    [SerializeField]
+    protected int endurance = 1;
+    public int Endurance { get { return endurance; } set { endurance = value; } }
+    [SerializeField]
+    protected int experience = 1;
+    public int Experience { get { return experience; } set { experience = value; } }
+
+
     [Header("Rest")]
-    public bool isCollision = false;
+    public bool isWallCollision = false;
     public Vector3 contectNormal = Vector3.zero;
 
-    public bool isAttack = true;
+    public bool isAttack = false;
+    public bool IsAttack { get { return isAttack; } set { isAttack = value; } }
     public int comboCount = 0;
 
     [SerializeField] GameObject aura;
     [SerializeField] GameObject magicCircle;
-    
+
 
     //public SkillManager skill { get; private set; }
     //public GameObject sword { get; private set; }
@@ -101,16 +136,18 @@ public class Player : Entity
     {
         base.Start();
 
+        //플레이어 카메라 초기화
         for (int i = 0; i < playerCameras.Length; i++)
         {
             playerCameras[i].SetActive(false);
         }
         currentPlayerCamera = playerCameras[(int)CameraMode.BasicCamera];
         currentPlayerCamera.SetActive(true);
-        
+
+        //어택폼 초기화
         attackFormManager = AttackFormManager.instance;
         currentAttackForm = attackFormManager.SetAttackForm(attackFormNum);
-        for(int i = 0; i < weapons.Length; i++)
+        for (int i = 0; i < weapons.Length; i++)
         {
             weapons[i].SetActive(false);
         }
@@ -118,16 +155,24 @@ public class Player : Entity
 
         //skill = SkillManager.instance;
 
+        //스테이트 머신 초기화
         stateMachine.Initialize(idleState);
 
+        //마우스 커서 숨김
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        //체력 마나 초기화
+        HealthPoint = MaxHealthPoint;
+        ManaPoint = MaxManaPoint;
+
     }
 
     protected override void Update()
     {
         base.Update();
 
+        //현재 스테이트 업데이트
         stateMachine.currentState.Update();
 
         //마우스 커서 숨김
@@ -147,7 +192,7 @@ public class Player : Entity
             weapons[attackFormNum].SetActive(false);
 
             attackFormNum++;
-            if(attackFormNum >= attackFormManager.AttackFormsMaxNum())
+            if (attackFormNum >= attackFormManager.GetAttackFormsMaxNum())
             {
                 attackFormNum = 0;
             }
@@ -162,6 +207,7 @@ public class Player : Entity
     {
         base.FixedUpdate();
 
+        //현재 스테이트 Fixed업데이트
         stateMachine.currentState.FixedUpdate();
 
     }
@@ -190,16 +236,17 @@ public class Player : Entity
 
     private void OnCollisionStay(Collision collision)
     {
-        if (!IsGroundDetected() || !IsGroundCollision(collision))
+        //콜리전 충돌 중인데 땅이 아닐 때
+        if (!IsGroundDetected())// || !IsGroundCollision(collision))
         {
             contectNormal = collision.contacts[0].normal;
-            isCollision = true;
+            isWallCollision = true;
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        isCollision = false;
+        isWallCollision = false;
     }
 
 
@@ -250,42 +297,42 @@ public class Player : Entity
         currentPlayerCamera.transform.rotation = tempCamRot;
     }
 
-    public AttackForm CurrentAttackForm()
+    public AttackForm GetCurrentAttackForm()
     {
         return currentAttackForm;
     }
 
-    public void IsAttack_True()
+    public void IsAttack_True() //애니메이션 이벤트
     {
-        isAttack = true;
+        IsAttack = false;
     }
 
-    public void AttackEnd()
+    public void AttackEnd() //애니메이션 이벤트
     {
         //Debug.Log("AttackEnd");
         if (comboCount >= currentAttackForm.attackFormData.comboMaxCount) //최대 콤보에 도달하면
         {
             stateMachine.ChangeState(idleState);
         }
-        else if (isAttack) //콤보 중간에 공격입력을 멈추면
+        else if (!IsAttack) //콤보 중간에 공격입력을 멈추면
         {
             stateMachine.ChangeState(idleState);
         }
     }
 
-    public void Attack()
+    public void Attack() //애니메이션 이벤트
     {
-        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, attackPower);
+        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, AttackPower);
 
         //Instantiate(attackPrefab, firePoint.position, transform.rotation);
     }
 
-    public void Skill()
+    public void Skill() //애니메이션 이벤트
     {
-        currentAttackForm.Skill(transform, firePoints[attackFormNum], attackPower);
+        currentAttackForm.Skill(transform, firePoints[attackFormNum], AttackPower);
     }
 
-    public void MagicSkillEnd()
+    public void MagicSkillEnd() //애니메이션 이벤트
     {
         if (currentAttackForm.GetType() == typeof(MagicForm))
         {
@@ -293,7 +340,7 @@ public class Player : Entity
         }
     }
 
-    public void SwordSkillAura()
+    public void SwordSkillAura() //애니메이션 이벤트
     {
         if (currentAttackForm.GetType() == typeof(SwordForm))
         {
@@ -301,20 +348,31 @@ public class Player : Entity
         }
     }
 
-    public void SkillEnd()
+    public void SkillEnd() //애니메이션 이벤트
     {
         stateMachine.ChangeState(idleState);
     }
 
-    public override void Damage(int attackPower)
+    public void TakeDamage(int Damage)
     {
-        base.Damage(attackPower);
+        //base.TakeDamage(Damage);
 
-        hp -= attackPower;
-        if (hp <= 0)
+        HealthPoint -= Damage;
+
+        if (HealthPoint <= 0)
         {
-            Debug.Log("플레이어 죽음");
+            Die();
         }
+    }
+
+    public void Die()
+    {
+        Debug.Log("플레이어 죽음");
+    }
+
+    public void RestoreHealth()
+    {
+        HealthPoint = MaxHealthPoint;
     }
 }
 

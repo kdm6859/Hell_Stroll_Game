@@ -36,20 +36,23 @@ public class PlayerGroundedState : PlayerState
         //    stateMachine.ChangeState(player.primaryAttackState);
         //}
 
+        //땅에서 떨어지면 airState로 변경
         if (!player.IsGroundDetected())
             stateMachine.ChangeState(player.airState);
 
+        //땅에서 Space를 누르면 jumpState로 변경
         if (Input.GetKeyDown(KeyCode.Space) && player.IsGroundDetected())
         {
             stateMachine.ChangeState(player.jumpState);
         }
 
-        if (Input.GetButtonDown("Fire1") && stateMachine.currentState != player.attackState && player.isAttack)// && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
+        //
+        if (Input.GetButtonDown("Fire1") && stateMachine.currentState != player.attackState && !player.IsAttack)// && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
         {
             stateMachine.ChangeState(player.attackState);
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && stateMachine.currentState != player.skillState && player.isAttack && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordSkill"))
+        if (Input.GetKeyDown(KeyCode.E) && stateMachine.currentState != player.skillState && !player.IsAttack && !player.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordSkill"))
         {
             stateMachine.ChangeState(player.skillState);
         }

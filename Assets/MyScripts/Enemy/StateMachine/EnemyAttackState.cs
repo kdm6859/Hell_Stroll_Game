@@ -13,7 +13,7 @@ public class EnemyAttackState : EnemyGroundedState
     {
         base.Enter();
 
-        enemy.isAttack = false;
+        enemy.IsAttack = false;
         enemy.comboCount = 1;
         enemy.anim.SetInteger("ComboCount", enemy.comboCount);
         enemy.anim.SetInteger("AttackForm", enemy.attackFormNum);
@@ -33,9 +33,9 @@ public class EnemyAttackState : EnemyGroundedState
             return;
 
 
-        if (enemy.DistanceCheck(DistanceCheckType.Attack) && enemy.isAttack && enemy.comboCount < enemy.CurrentAttackForm().attackFormData.comboMaxCount && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
+        if (enemy.DistanceCheck(DistanceCheckType.Attack) && enemy.IsAttack && enemy.comboCount < enemy.CurrentAttackForm().attackFormData.comboMaxCount && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
         {
-            enemy.isAttack = false;
+            enemy.IsAttack = false;
             enemy.comboCount++;
             enemy.anim.SetInteger("ComboCount", enemy.comboCount);
             enemy.transform.LookAt(GameManager.instance.player.transform.position);
@@ -59,7 +59,7 @@ public class EnemyAttackState : EnemyGroundedState
         base.Exit();
 
         enemy.comboCount = 0;
-        enemy.isAttack = true;
+        enemy.IsAttack = true;
 
         enemy.agent.isStopped = false;
     }

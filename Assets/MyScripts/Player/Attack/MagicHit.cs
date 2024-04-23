@@ -50,8 +50,8 @@ public class MagicHit : AttackHit
                 Debug.Log("레이저 감지안됨");
             for (int i = 0; i < hitColliders.Length; i++)
             {
-                hitColliders[i].GetComponent<Enemy>().Damage(attackPower);
-                Debug.Log("Laser attackPower : " + attackPower);
+                hitColliders[i].GetComponent<IDamageable>().TakeDamage(damage);
+                Debug.Log("Laser attackPower : " + damage);
             }
 
             yield return new WaitForSeconds(0.1f);
@@ -91,8 +91,8 @@ public class MagicHit : AttackHit
     {
         if (collision.collider.CompareTag("Enemy"))
         {
-            collision.collider.GetComponent<Enemy>().Damage(attackPower);
-            Debug.Log("col attackPower : " + attackPower);
+            collision.collider.GetComponent<IDamageable>().TakeDamage(damage);
+            Debug.Log("col attackPower : " + damage);
         }
     }
 

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class Entity : MonoBehaviour
+public class Entity : MonoBehaviour, IMovable
 {
     #region component
     public Animator anim { get; private set; }
@@ -21,7 +22,9 @@ public class Entity : MonoBehaviour
     [Header("Collision Info")]
     //public Transform attackCheck;
     //public float attackCheckRadius;
-    [SerializeField] protected Transform[] groundCheck;
+    [SerializeField] Vector3 boxSize;
+    [SerializeField] protected Transform groundCheck;
+    [SerializeField] protected Transform[] groundChecks;
     [SerializeField] protected float groundCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
     public RaycastHit[] groundHitInfo;
@@ -30,16 +33,19 @@ public class Entity : MonoBehaviour
     [SerializeField] protected LayerMask whatIsWall;
     public RaycastHit[] wallHitInfo;
 
-    [Header("Move Info")]
-    public float moveSpeed = 6f;
-    public float runSpeed = 10f;
-    public float rotSpeed = 2f;
-    public float jumpForce = 12f;
 
-    [Header("Status Info")]
-    public int hp = 1000;
-    public int mp = 100;
-    public int attackPower = 10;
+    #region IMovable
+    [Header("Move Info")]
+    protected float moveSpeed = 6f;
+    protected float runSpeed = 12f;
+    protected float rotSpeed = 2f;
+    protected float jumpForce = 16f;
+
+    public float MoveSpeed { get { return moveSpeed; } set { moveSpeed = value; } }
+    public float RunSpeed { get { return runSpeed; } set { runSpeed = value; } }
+    public float RotSpeed { get { return rotSpeed; } set { rotSpeed = value; } }
+    public float JumpForce { get { return jumpForce; } set { jumpForce = value; } }
+    #endregion
 
 
     //public bool facingRight { get; set; } = true;
@@ -58,7 +64,7 @@ public class Entity : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
-        groundHitInfo = new RaycastHit[groundCheck.Length];
+        groundHitInfo = new RaycastHit[groundChecks.Length];
     }
 
     protected virtual void Update()
@@ -71,13 +77,13 @@ public class Entity : MonoBehaviour
 
     }
 
-    public virtual void Damage(int attackPower)
-    {
-        //fx.StartCoroutine("FlashFX");
-        //StartCoroutine("HitKnockback");
+    //public virtual void TakeDamage(int attackPower)
+    //{
+    //    //fx.StartCoroutine("FlashFX");
+    //    //StartCoroutine("HitKnockback");
 
-        Debug.Log(gameObject.name + " : µ¥¹ÌÁö");
-    }
+    //    Debug.Log(gameObject.name + " : µ¥¹ÌÁö");
+    //}
 
     //protected virtual IEnumerator HitKnockback()
     //{
@@ -89,7 +95,7 @@ public class Entity : MonoBehaviour
     //    isKnocked = false;
     //}
 
-    #region Velocity
+    #region IMovable
     //public virtual void SetZeroVelocity()
     //{
     //    if (isKnocked)
@@ -98,13 +104,14 @@ public class Entity : MonoBehaviour
     //    rb.velocity = Vector2.zero;
     //}
 
-
     public virtual void SetVelocity(float xVelocity, float yVelocity, float zVelocity)
     {
         //if (isKnocked)
         //    return;
 
-        rb.velocity = new Vector3(xVelocity, yVelocity, zVelocity);
+        //rb.velocity = new Vector3(xVelocity, yVelocity, zVelocity);
+
+        SetVelocity(new Vector3(xVelocity, yVelocity, zVelocity));
     }
 
     public virtual void SetVelocity(Vector3 velocity)
@@ -123,26 +130,30 @@ public class Entity : MonoBehaviour
     #region Collision
     public virtual bool IsGroundDetected()
     {
+        return Physics.BoxCast(groundCheck.position, boxSize / 2.0f, -transform.up, transform.rotation, groundCheckDistance, whatIsGround);
 
-        for (int i = 0; i < groundCheck.Length; i++)
-        {
-            if (Physics.Raycast(groundCheck[i].position, Vector3.down, out groundHitInfo[i], groundCheckDistance, whatIsGround))
-                return true;
-        }
+        //for (int i = 0; i < groundChecks.Length; i++)
+        //{
+        //    if (Physics.Raycast(groundChecks[i].position, Vector3.down, out groundHitInfo[i], groundCheckDistance, whatIsGround))
+        //    {
+        //        Debug.Log("¶¥¶¥");
+        //        return true;
+        //    }
+        //}
 
-        return false;
+        //return false;
     }
 
-    public virtual bool IsGroundCollision(Collision collision)
-    {
-        for (int i = 0; i < groundCheck.Length; i++)
-        {
-            if (groundHitInfo[i].collider == collision.collider)
-                return true;
-        }
+    //public virtual bool IsGroundCollision(Collision collision)
+    //{
+    //    for (int i = 0; i < groundCheck.Length; i++)
+    //    {
+    //        if (groundHitInfo[i].collider == collision.collider)
+    //            return true;
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 
     public virtual bool IsWallDetected()
     {
@@ -173,11 +184,12 @@ public class Entity : MonoBehaviour
     protected virtual void OnDrawGizmos()
     {
         //¶¥ Ã¼Å©
-        for (int i = 0; i < groundCheck.Length; i++)
-        {
-            Gizmos.DrawLine(groundCheck[i].position, new Vector3(
-                groundCheck[i].position.x, groundCheck[i].position.y - groundCheckDistance, groundCheck[i].position.z));
-        }
+        Gizmos.DrawCube(groundCheck.position - transform.up * groundCheckDistance, boxSize);
+        //for (int i = 0; i < groundChecks.Length; i++)
+        //{
+        //    Gizmos.DrawLine(groundChecks[i].position, new Vector3(
+        //        groundChecks[i].position.x, groundChecks[i].position.y - groundCheckDistance, groundChecks[i].position.z));
+        //}
 
         ////º®Ã¼Å©
         //Gizmos.DrawRay(wallCheck.position, wallCheck.forward * 0f);

@@ -36,17 +36,17 @@ public class PlayerAirState : PlayerState
         float xInputAbs = Mathf.Abs(xInput);
         float zInputAbs = Mathf.Abs(zInput);
 
-        if(player.isCollision)
+        if(player.isWallCollision)
         {
             //moveVec = player.contectNormal + player.transform.forward;
-            moveVec = player.MovingResult(player.transform.forward, player.contectNormal) * (Input.GetKey(KeyCode.LeftShift) ? player.runSpeed : player.moveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
+            moveVec = player.MovingResult(player.transform.forward, player.contectNormal) * (Input.GetKey(KeyCode.LeftShift) ? player.RunSpeed : player.MoveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
             //moveVec = player.MovingResult(player.transform.forward, player.wallHitInfo[0].normal) * player.moveSpeed * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
             //Debug.Log(moveVec.magnitude + "Jump \nplayer.contectNormal : " + player.contectNormal + "\nplayer.transform.forward : " + player.transform.forward +
             //    "\n" + moveVec);
         }
         else
         {
-            moveVec = player.transform.forward * (Input.GetKey(KeyCode.LeftShift) ? player.runSpeed : player.moveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
+            moveVec = player.transform.forward * (Input.GetKey(KeyCode.LeftShift) ? player.RunSpeed : player.MoveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
         }
 
         if (player.IsGroundDetected())

@@ -87,6 +87,5 @@ public class SwordForm : AttackForm
 
         SwordEnergyCore.SetActive(true);
         aura.SetActive(true);
-
     }
 }

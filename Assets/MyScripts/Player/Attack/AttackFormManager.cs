@@ -9,7 +9,6 @@ public class AttackFormManager : MonoBehaviour
     [SerializeField]
     AttackForm[] attackForms;
 
-
     private void Awake()
     {
         if(instance == null)
@@ -27,7 +26,7 @@ public class AttackFormManager : MonoBehaviour
         return attackForms[attackFormNum];
     }
 
-    public int AttackFormsMaxNum()
+    public int GetAttackFormsMaxNum()
     {
         return attackForms.Length;
     }

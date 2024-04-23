@@ -9,7 +9,7 @@ public enum DistanceCheckType
     Attack
 }
 
-public class Enemy : Entity
+public class Enemy : Entity, IUnitStats, IDamageable, IAttackable
 {
 
     [Header("Attack Info")]
@@ -21,11 +21,36 @@ public class Enemy : Entity
     //public GameObject attackPrefab;
     //public GameObject skillPrefab;
 
+    [Header("Status Info")]
+    protected int maxHealthPoint;
+    public int MaxHealthPoint { get { return maxHealthPoint; } set { maxHealthPoint = value; } }
+    protected int healthPoint = 1000;
+    public int HealthPoint { get { return healthPoint; } set { healthPoint = value; } }
+    protected int maxManaPoint = 100;
+    public int MaxManaPoint { get { return maxManaPoint; } set { maxManaPoint = value; } }
+    protected int manaPoint = 100;
+    public int ManaPoint { get { return manaPoint; } set { manaPoint = value; } }
+    protected int attackPower = 10;
+    public int AttackPower { get { return attackPower; } set { attackPower = value; } }
+    protected int defense = 0;
+    public int Defense { get { return defense; } set { defense = value; } }
+    protected int strength = 1;
+    public int Strength { get { return strength; } set { strength = value; } }
+    protected int dexterity = 1;
+    public int Dexterity { get { return dexterity; } set { dexterity = value; } }
+    protected int endurance = 1;
+    public int Endurance { get { return endurance; } set { endurance = value; } }
+    protected int experience = 1;
+    public int Experience { get { return experience; } set { experience = value; } }
+
+
     public bool isCollision { get; set; } = false;
     [Header("Rest")]
     public Vector3 contectNormal = Vector3.zero;
 
     public bool isAttack = true;
+    public bool IsAttack { get { return isAttack; } set { isAttack = value; } }
+
     public int comboCount = 0;
 
     public NavMeshAgent agent;
@@ -164,15 +189,15 @@ public class Enemy : Entity
 
     }
 
-    public override void Damage(int attackPower)
+    public void TakeDamage(int Damage)
     {
-        base.Damage(attackPower);
+        //base.TakeDamage(Damage);
 
-        hp -= attackPower;
-        if (hp <= 0)
+        HealthPoint -= Damage;
+
+        if (HealthPoint <= 0)
         {
-            Debug.Log("Àû Á×À½");
-            Destroy(gameObject);
+            Die();
         }
     }
 
@@ -198,7 +223,7 @@ public class Enemy : Entity
 
     public void IsAttack_True()
     {
-        isAttack = true;
+        IsAttack = true;
     }
 
     public void AttackEnd()
@@ -207,7 +232,7 @@ public class Enemy : Entity
         {
             if (DistanceCheck(DistanceCheckType.Attack))
             {
-                isAttack = false;
+                IsAttack = false;
                 comboCount = 1;
                 anim.SetInteger("ComboCount", comboCount);
                 transform.LookAt(GameManager.instance.player.transform.position);
@@ -215,7 +240,7 @@ public class Enemy : Entity
             else
                 stateMachine.ChangeState(idleState);
         }
-        else if (isAttack) //ÄÞº¸ Áß°£¿¡ °ø°ÝÀÔ·ÂÀ» ¸ØÃß¸é
+        else if (IsAttack) //ÄÞº¸ Áß°£¿¡ °ø°ÝÀÔ·ÂÀ» ¸ØÃß¸é
         {
             stateMachine.ChangeState(idleState);
         }
@@ -223,10 +248,20 @@ public class Enemy : Entity
 
     public void Attack()
     {
-        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, attackPower);
+        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, AttackPower);
 
         //Instantiate(attackPrefab, firePoint.position, transform.rotation);
     }
 
+    public void Die()
+    {
+        Debug.Log("Àû Á×À½");
+        Destroy(gameObject);
+    }
+
+    public void RestoreHealth()
+    {
+        
+    }
 }
 

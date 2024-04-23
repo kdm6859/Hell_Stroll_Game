@@ -13,7 +13,7 @@ public class PlayerJumpState : PlayerState
     {
         base.Enter();
 
-        rb.velocity = new Vector3(rb.velocity.x, player.jumpForce, rb.velocity.z);
+        rb.velocity = new Vector3(rb.velocity.x, player.JumpForce, rb.velocity.z);
         //player.SetVelocity(1000, rb.velocity.y, 1000);
         //Debug.Log(rb.velocity);
 
@@ -39,10 +39,10 @@ public class PlayerJumpState : PlayerState
         float xInputAbs = Mathf.Abs(xInput);
         float zInputAbs = Mathf.Abs(zInput);
         
-        if (player.isCollision)
+        if (player.isWallCollision)
         {
             //moveVec = player.contectNormal + player.transform.forward;
-            moveVec = player.MovingResult(player.transform.forward, player.contectNormal) * (Input.GetKey(KeyCode.LeftShift) ? player.runSpeed : player.moveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
+            moveVec = player.MovingResult(player.transform.forward, player.contectNormal) * (Input.GetKey(KeyCode.LeftShift) ? player.RunSpeed : player.MoveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
             //moveVec = player.MovingResult(player.transform.forward, player.wallHitInfo[0].normal) * player.moveSpeed * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
             //Debug.Log(moveVec.magnitude+ "Jump \nplayer.contectNormal : " + player.contectNormal + "\nplayer.transform.forward : " + player.transform.forward +
             //    "\n" + moveVec);
@@ -50,7 +50,7 @@ public class PlayerJumpState : PlayerState
         }
         else
         {
-            moveVec = player.transform.forward * (Input.GetKey(KeyCode.LeftShift) ? player.runSpeed : player.moveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
+            moveVec = player.transform.forward * (Input.GetKey(KeyCode.LeftShift) ? player.RunSpeed : player.MoveSpeed) * (xInputAbs > zInputAbs ? xInputAbs : zInputAbs);
         }
 
         if (rb.velocity.y < 0)
