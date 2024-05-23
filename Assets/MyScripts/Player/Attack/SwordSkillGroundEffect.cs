@@ -14,6 +14,7 @@ public class SwordSkillGroundEffect : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //스킬 이펙트가 땅에 닿아있을 시 접촉면에 일정 간격으로 폭발이펙트 생성
         if (isCreate)
         {
             if (isCreateCount == 0)
@@ -40,6 +41,8 @@ public class SwordSkillGroundEffect : MonoBehaviour
     {
         if (IsGroundDetected())
             isCreate = true;
+        else
+            isCreate = false;
     }
 
     private void OnTriggerExit(Collider other)

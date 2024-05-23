@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TriangleNet;
@@ -7,6 +8,14 @@ public enum CameraMode
 {
     BasicCamera = 0,
     BattleCamera = 1
+}
+
+[Serializable]
+public class CharacterAttackInfo
+{
+    public GameObject weapon;
+    public Transform firePoint;
+    public Transform[] skillEffectTransforms;
 }
 
 public class Player : Entity, IUnitStats, IDamageable, IAttackable
@@ -29,9 +38,10 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
     public float dashDir { get; private set; }
 
     [Header("Attack Info")]
-    AttackFormManager attackFormManager;
+    [SerializeField] AttackFormManager attackFormManager;
     AttackForm currentAttackForm;
     public int attackFormNum = 0;
+    public CharacterAttackInfo[] characterAttackInfos;
     public GameObject[] weapons;
     public Transform[] firePoints;
     //public GameObject attackPrefab;
@@ -145,13 +155,19 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
         currentPlayerCamera.SetActive(true);
 
         //어택폼 초기화
-        attackFormManager = AttackFormManager.instance;
-        currentAttackForm = attackFormManager.SetAttackForm(attackFormNum);
-        for (int i = 0; i < weapons.Length; i++)
+        //attackFormManager = AttackFormManager.instance;
+        currentAttackForm = attackFormManager.GetAttackForm(attackFormNum);
+        Debug.Log(characterAttackInfos.Length);
+        for (int i = 0; i < attackFormManager.GetAttackFormsMaxNum(); i++)
         {
-            weapons[i].SetActive(false);
+            characterAttackInfos[i].weapon.SetActive(false);
+            if (characterAttackInfos[i].skillEffectTransforms.Length != 0)
+            {
+                Debug.Log(i + "??");
+                attackFormManager.SkillInitialized(i, characterAttackInfos[i].skillEffectTransforms);
+            }
         }
-        weapons[attackFormNum].SetActive(true);
+        characterAttackInfos[attackFormNum].weapon.SetActive(true);
 
         //skill = SkillManager.instance;
 
@@ -175,7 +191,7 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
         //현재 스테이트 업데이트
         stateMachine.currentState.Update();
 
-        //마우스 커서 숨김
+        //마우스 커서 숨김 (임시)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.visible = !Cursor.visible;
@@ -189,7 +205,7 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
         //어택폼 전환
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            weapons[attackFormNum].SetActive(false);
+            characterAttackInfos[attackFormNum].weapon.SetActive(false);
 
             attackFormNum++;
             if (attackFormNum >= attackFormManager.GetAttackFormsMaxNum())
@@ -197,8 +213,8 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
                 attackFormNum = 0;
             }
 
-            weapons[attackFormNum].SetActive(true);
-            currentAttackForm = attackFormManager.SetAttackForm(attackFormNum);
+            characterAttackInfos[attackFormNum].weapon.SetActive(true);
+            currentAttackForm = attackFormManager.GetAttackForm(attackFormNum);
         }
 
     }
@@ -302,34 +318,28 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
         return currentAttackForm;
     }
 
-    public void IsAttack_True() //애니메이션 이벤트
-    {
-        IsAttack = false;
-    }
-
-    public void AttackEnd() //애니메이션 이벤트
-    {
-        //Debug.Log("AttackEnd");
-        if (comboCount >= currentAttackForm.attackFormData.comboMaxCount) //최대 콤보에 도달하면
-        {
-            stateMachine.ChangeState(idleState);
-        }
-        else if (!IsAttack) //콤보 중간에 공격입력을 멈추면
-        {
-            stateMachine.ChangeState(idleState);
-        }
-    }
-
     public void Attack() //애니메이션 이벤트
     {
-        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, AttackPower);
+        currentAttackForm.Attack(transform, characterAttackInfos[attackFormNum].firePoint, comboCount, AttackPower);
 
         //Instantiate(attackPrefab, firePoint.position, transform.rotation);
     }
 
-    public void Skill() //애니메이션 이벤트
+    public void NextAttackInputPossible() //애니메이션 이벤트
     {
-        currentAttackForm.Skill(transform, firePoints[attackFormNum], AttackPower);
+        IsAttack = false;
+    }
+
+    public void AttackEnd() //애니메이션 이벤트, 공격 애니메이션 종료시점에서 다음 콤보공격 가능여부 확인 후 idleState로 전환
+    {
+        //Debug.Log("AttackEnd");
+
+        //최대 콤보에 도달하거나 콤보 중간에 공격입력을 멈추면
+        if (comboCount >= currentAttackForm.AttackScript.AttackFormat.comboMaxCount || !IsAttack)
+        {
+            stateMachine.ChangeState(idleState);
+        }
+
     }
 
     public void MagicSkillEnd() //애니메이션 이벤트
@@ -340,16 +350,29 @@ public class Player : Entity, IUnitStats, IDamageable, IAttackable
         }
     }
 
-    public void SwordSkillAura() //애니메이션 이벤트
+    //public void SwordSkillAura() //애니메이션 이벤트
+    //{
+    //    if (currentAttackForm.GetType() == typeof(SwordForm))
+    //    {
+    //        ((SwordForm)currentAttackForm).SkillCharging(aura);
+    //    }
+    //}
+
+    public void SkillStart() //애니메이션 이벤트
     {
-        if (currentAttackForm.GetType() == typeof(SwordForm))
-        {
-            ((SwordForm)currentAttackForm).SkillCharging(aura);
-        }
+        currentAttackForm.SkillStart();
+    }
+
+    public void Skill() //애니메이션 이벤트
+    {
+        currentAttackForm.Skill(transform, characterAttackInfos[attackFormNum].firePoint, AttackPower);
     }
 
     public void SkillEnd() //애니메이션 이벤트
     {
+        currentAttackForm.SkillEnd();
+
+        //Idle로 상태 전환
         stateMachine.ChangeState(idleState);
     }
 

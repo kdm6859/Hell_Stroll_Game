@@ -62903,7 +62903,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 1
-    functionName: IsAttack_True
+    functionName: NextAttackInputPossible
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

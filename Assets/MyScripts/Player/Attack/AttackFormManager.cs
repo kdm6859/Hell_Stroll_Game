@@ -4,24 +4,29 @@ using UnityEngine;
 
 public class AttackFormManager : MonoBehaviour
 {
-    public static AttackFormManager instance;
+    //public static AttackFormManager instance;
 
     [SerializeField]
     AttackForm[] attackForms;
 
-    private void Awake()
+    //private void Awake()
+    //{
+    //    if(instance == null)
+    //    {
+    //        instance = this;
+    //    }
+    //    else
+    //    {
+    //        Destroy(this.gameObject);
+    //    }
+    //}
+
+    public void SkillInitialized(int attackFormNum, Transform[] skillEffectPoints)
     {
-        if(instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
+        attackForms[attackFormNum].SkillScript.SkillInitialized(skillEffectPoints);
     }
 
-    public AttackForm SetAttackForm(int attackFormNum)
+    public AttackForm GetAttackForm(int attackFormNum)
     {
         return attackForms[attackFormNum];
     }

@@ -12,7 +12,9 @@ public class SwordForm : AttackForm
     {
         base.Attack(entity, firePoint, comboNum, attackPower);
 
-        GameObject attack;
+        AttackScript.Attack(entity, firePoint, comboNum, attackPower);
+
+        /*GameObject attack;
         float magnifyingPower = 1f;
 
 
@@ -54,15 +56,24 @@ public class SwordForm : AttackForm
         else
             return;
 
-        attack.GetComponent<SwordHit>().SetAttackPower(attackPower, magnifyingPower);
+        attack.GetComponent<SwordHit>().SetAttackPower(attackPower, magnifyingPower);*/
+    }
+
+    public override void SkillStart()
+    {
+        base.SkillStart();
+
+        skillScript.SkillStart();
     }
 
     public override void Skill(Transform entity, Transform firePoint, int attackPower)
     {
         base.Skill(entity, firePoint, attackPower);
 
-        GameObject skill;
-        float magnifyingPower = 15f;
+        skillScript.Skill(entity, firePoint, attackPower);
+
+        /*GameObject skill; 
+        int magnifyingPower = 15;
 
         SwordEnergyCore.SetActive(false);
         if (aura != null)
@@ -78,14 +89,28 @@ public class SwordForm : AttackForm
         skill.GetComponent<SwordHit>().SetAttackPower(attackPower, magnifyingPower);
 
         skill.GetComponent<Rigidbody>().AddForce(skill.transform.forward * 60f, ForceMode.Impulse);
-
+        */
     }
 
-    public void SkillCharging(GameObject aura)
+    public override void SkillEnd()
     {
-        this.aura = aura;
+        base.SkillEnd();
 
-        SwordEnergyCore.SetActive(true);
-        aura.SetActive(true);
+        skillScript.SkillEnd();
     }
+
+    public override void ShutDownSkill()
+    {
+        base.ShutDownSkill();
+
+        skillScript.ShutDownSkill();
+    }
+
+    //public void SkillCharging(GameObject aura)
+    //{
+    //    this.aura = aura;
+
+    //    SwordEnergyCore.SetActive(true);
+    //    aura.SetActive(true);
+    //}
 }

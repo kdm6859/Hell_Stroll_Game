@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a72b391737bce4597debf02dff1400, type: 3}
   m_Name: LaserSkill
   m_EditorClassIdentifier: 
-  formName: Magic
+  attackFormName: Magic
   magnifyingDamages: 1e000000
   coolTime: 30
   manaCost: 3
@@ -21,3 +21,4 @@ MonoBehaviour:
   - {fileID: 3270128888385086708, guid: 5e8f5bebe827aed4ab177c81130cc457, type: 3}
   - {fileID: 8496192945244776263, guid: c7794311be1331f4380436864d48bd43, type: 3}
   - {fileID: 2754222053987454459, guid: 2485c8390055ab94b9a5a5ef25318202, type: 3}
+  skillBase: {fileID: 0}

@@ -14,9 +14,9 @@ public class MagicForm : AttackForm
     {
         base.Attack(entity, firePoint, comboNum, attackPower);
 
-        GameObject attack = Instantiate(attackFormData.attackPrefabs[0], firePoint.position, entity.rotation);
+        GameObject attack = Instantiate(AttackScript.AttackFormat.attackPrefabs[0], firePoint.position, entity.rotation);
 
-        float magnifyingPower = 1f;
+        int magnifyingPower = 100;
 
         attack.GetComponent<MagicHit>().SetAttackPower(attackPower, magnifyingPower);
 
@@ -26,7 +26,7 @@ public class MagicForm : AttackForm
     {
         base.Skill(entity, firePoint, attackPower);
 
-        float magnifyingPower = 0.3f;
+        int magnifyingPower = 30;
 
         skill_Lasers[0].SetActive(true);
 
@@ -35,7 +35,7 @@ public class MagicForm : AttackForm
  
     }
 
-    IEnumerator LaserMiddleOn(int attackPower, float magnifyingPower)
+    IEnumerator LaserMiddleOn(int attackPower, int magnifyingPower)
     {
         yield return new WaitForSeconds(1f);
 

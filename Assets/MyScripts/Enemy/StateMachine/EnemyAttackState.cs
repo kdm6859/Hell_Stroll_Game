@@ -33,7 +33,7 @@ public class EnemyAttackState : EnemyGroundedState
             return;
 
 
-        if (enemy.DistanceCheck(DistanceCheckType.Attack) && enemy.IsAttack && enemy.comboCount < enemy.CurrentAttackForm().attackFormData.comboMaxCount && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
+        if (enemy.DistanceCheck(DistanceCheckType.Attack) && enemy.IsAttack && enemy.comboCount < enemy.CurrentAttackForm().AttackScript.AttackFormat.comboMaxCount && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("SwordAttack3") && !enemy.anim.GetCurrentAnimatorStateInfo(0).IsName("MagicAttack3"))
         {
             enemy.IsAttack = false;
             enemy.comboCount++;

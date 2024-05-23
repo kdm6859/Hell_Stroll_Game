@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDamageable
+interface IDamageable
 {
-    public int HealthPoint { get; set; }
-    public int Defense { get; set; }
-    public void Die();
-    public void TakeDamage(int Damage);
-    public void RestoreHealth();
+    int HealthPoint { get; set; }
+    int Defense { get; set; }
+    void Die();
+    void TakeDamage(int Damage);
+    void RestoreHealth();
 }

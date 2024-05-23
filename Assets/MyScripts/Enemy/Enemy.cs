@@ -221,14 +221,21 @@ public class Enemy : Entity, IUnitStats, IDamageable, IAttackable
         return currentAttackForm;
     }
 
-    public void IsAttack_True()
+    public void Attack()
+    {
+        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, AttackPower);
+
+        //Instantiate(attackPrefab, firePoint.position, transform.rotation);
+    }
+
+    public void NextAttackInputPossible()
     {
         IsAttack = true;
     }
 
     public void AttackEnd()
     {
-        if (comboCount >= currentAttackForm.attackFormData.comboMaxCount) //최대 콤보에 도달하면
+        if (comboCount >= currentAttackForm.AttackScript.AttackFormat.comboMaxCount) //최대 콤보에 도달하면
         {
             if (DistanceCheck(DistanceCheckType.Attack))
             {
@@ -246,12 +253,7 @@ public class Enemy : Entity, IUnitStats, IDamageable, IAttackable
         }
     }
 
-    public void Attack()
-    {
-        currentAttackForm.Attack(transform, firePoints[attackFormNum], comboCount, AttackPower);
-
-        //Instantiate(attackPrefab, firePoint.position, transform.rotation);
-    }
+    
 
     public void Die()
     {

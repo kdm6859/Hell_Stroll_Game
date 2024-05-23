@@ -74560,7 +74560,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.4
-    functionName: SwordSkillAura
+    functionName: SkillStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a72b391737bce4597debf02dff1400, type: 3}
   m_Name: SwordSkill
   m_EditorClassIdentifier: 
-  formName: Sword
+  attackFormName: Sword
   magnifyingDamages: e8030000
   coolTime: 30
   manaCost: 30
   icon: {fileID: 0}
   skillPrefabs:
   - {fileID: 8969650413962598237, guid: 6907d0d4eec98f74b960902337ab7f70, type: 3}
+  - {fileID: 3675870121105230108, guid: a1d9dd5e501851742a030673003b0650, type: 3}
   - {fileID: 2365438324253814337, guid: ca0bdb3d6ee81fa4b9f9d463cea0e4ca, type: 3}
+  skillBase: {fileID: 0}

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: SwordAttack
   m_EditorClassIdentifier: 
   attackFormName: 
-  magnifyingDamages: 
+  magnifyingDamages: 64000000
   icon: {fileID: 0}
-  attackPrefabs: []
-  comboMaxCount: 0
+  attackPrefabs:
+  - {fileID: 4440606700962197316, guid: 0c5f4b3275b617a47840ed4f1357c11c, type: 3}
+  comboMaxCount: 3
